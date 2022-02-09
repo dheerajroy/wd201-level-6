@@ -3,6 +3,16 @@ from .models import Task
 from django.views.generic import (ListView, CreateView, DetailView, UpdateView, DeleteView)
 from .forms import CreateUpdateTaskForm
 
+class PriorityUpdater:
+    def __init__(self, priority):
+        same_tasks = Task.objects.filter(priority=priority).order_by('-id')[1:]
+        while True:
+            if same_tasks:
+                same_tasks[0].priority += 1
+                same_tasks[0].save()
+                same_tasks = Task.objects.filter(priority=same_tasks[0].priority).order_by('-id')[1:]
+            else:
+                break
 
 class AllTasksView(ListView):
     template_name = 'all_tasks.html'
@@ -39,14 +49,7 @@ class CreateTaskView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
-        same_tasks = Task.objects.filter(priority=form.instance.priority).order_by('-id')[1:]
-        while True:
-            if same_tasks:
-                same_tasks[0].priority += 1
-                same_tasks[0].save()
-                same_tasks = Task.objects.filter(priority=same_tasks[0].priority).order_by('-id')[1:]
-            else:
-                break
+        PriorityUpdater(form.instance.priority)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -62,14 +65,7 @@ class UpdateTaskView(UpdateView):
 
     def form_valid(self, form):
         form.save()
-        same_tasks = Task.objects.filter(priority=form.instance.priority).order_by('-id')[1:]
-        while True:
-            if same_tasks:
-                same_tasks[0].priority += 1
-                same_tasks[0].save()
-                same_tasks = Task.objects.filter(priority=same_tasks[0].priority).order_by('-id')[1:]
-            else:
-                break
+        PriorityUpdater(form.instance.priority)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
