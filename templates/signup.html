@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}Signup{% endblock %}
+
+{% block body %}
+<h1 class="heading">Todo Manager</h1>
+<form action="" method="post">
+    <p class="sub-heading">Signup</p>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p class="helptext">Have an account already? <a href="/accounts/login" class="text-red-600">Login</a> here.</p>
+    <input class="" type="submit" value="Signup">
+</form>
+{% endblock %}

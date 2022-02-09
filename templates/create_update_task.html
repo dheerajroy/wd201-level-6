@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block title %}Create/Update{% endblock %}
+
+{% block body %}
+<h1 class="heading">{{ type }} Todo</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Add">
+</form>
+{% endblock %}

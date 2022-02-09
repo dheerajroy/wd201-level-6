@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}Completed Tasks{% endblock %}
+
+{% block body %}
+<h1>Completed Tasks:</h1>
+<ol>
+    {% for task in completed_tasks %}
+    <li>
+        <h3>{{ task.title }} [index: {{task.id}}]&emsp;<a href="/delete_completed_task/{{ task.id }}">delete</a></h3>
+        {% if task.description %}
+        <p>&emsp;{{ task.description }}</p>
+        {% else %}
+        <h4>&emsp;No description</h4>
+        {% endif %}
+    </li>
+    {% empty %}
+    <h2>No completed tasks</h2>
+    {% endfor %}
+</ol>
+{% endblock %}

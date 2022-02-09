@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1 class="heading">{{ task.title }}</h1>
+    <p class="helptext">{{ task.description }}</p>
+    <p class="helptext">{{ task.created_date }}</p>
+{% endblock %}

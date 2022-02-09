@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block title %}All Tasks{% endblock %}
+
+{% block body %}
+<div class="topbar">
+    <div class="py-5">
+        <h1 class="heading float-left">Hi {{ request.user.first_name }}</h1>
+        <a href="/accounts/logout" class="text-red-600 float-right p-5 mx-10">Log out</a>
+    </div>
+    <h3>{{ completed_ratio }}</h3>
+    <div class="task-btns flex justify-center p-5">
+        <a href="?status=all"><button class="{% if request_type == 'all' %}text-red-600 bg-red-200{% endif %}">All</button></a>
+        <a href="?status=pending"><button class="{% if request_type == 'pending' %}text-red-600 bg-red-200{% endif %}">Pending</button></a>
+        <a href="?status=completed"><button class="{% if request_type == 'completed' %}text-red-600 bg-red-200{% endif %}">Completed</button></a>
+    </div>
+</div>
+
+<ol class="tasks">
+    {% for task in tasks %}
+    <li class="task-card">
+        <div class="float-left">
+            {% if task.completed %}
+                <h3 class="strike-text">{{ task.title }}</h3>
+            {% else %}
+                <h3>{{ task.title }}</h3>
+            {% endif %}
+            {% if task.description %}
+            <p class="helptext">&emsp;{{ task.description }}</p>
+            {% else %}
+            <h4 class="text-red-600">&emsp;No description</h4>
+            {% endif %}
+            <p class="helptext">{{ task.created_date }}</p>
+        </div>
+        <div class="edit-del-btns">
+            <a href="/update/{{ task.id }}">
+                <button class="edit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </button>
+            </a>
+            <a href="/delete/{{ task.id }}">
+                <button class="delete-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </a>
+        </div>
+    </li>
+    {% empty %}
+    <h2>Empty</h2>
+    {% endfor %}
+</ol>
+<a href="/create"><button class="add">Add</button></a>
+{% endblock %}

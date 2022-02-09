@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button, input[type=submit] {
+    @apply cursor-pointer;
+}
+
+form {
+    @apply flex flex-col;
+}
+
+input[type], textarea {
+    @apply rounded-lg my-1 bg-indigo-50;
+}
+
+input[type=submit], .add {
+    @apply bg-red-600 p-2 text-white rounded-lg px-20;
+}
+
+.heading {
+    @apply font-bold text-4xl my-3;
+}
+
+.sub-heading {
+    @apply text-2xl my-5;
+}
+
+label, .helptext, form ul {
+    @apply block;
+}
+
+label[for=id_completed] {
+    @apply inline;
+}
+
+form ul, .helptext {
+    @apply list-disc text-neutral-500 mx-5;
+}
+
+.topbar {
+    @apply fixed top-0 bg-white;
+}
+
+.tasks-btns {
+    @apply p-20;
+}
+
+.task-btns button {
+    @apply rounded-2xl p-2 mx-1;
+}
+
+.tasks {
+    @apply mt-[190px];
+    overflow-y: auto;
+}
+
+.task-card {
+    @apply bg-[#F1F5F9] p-3 rounded-2xl shadow-md m-3 h-28;
+}
+
+.task-card .content {
+    @apply float-left;
+}
+
+.task-card .func-btns {
+    @apply float-right;
+}
+
+.edit-del-btns {
+    @apply float-right h-full flex items-center justify-center;
+}
+
+.edit-del-btns button {
+    @apply text-white p-2 h-fit rounded-md mx-1;
+}
+
+.edit-btn {
+    @apply bg-[#2DD4BF];
+}
+
+.delete-btn {
+    @apply bg-[#F43F5E];
+}
+
+.strike-text {
+    @apply text-red-600 line-through;
+}
+
+::-webkit-scrollbar {
+    @apply w-1
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-[#f1f1f1];
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-[#888];
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-red-600
+}
