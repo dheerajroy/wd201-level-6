@@ -36,7 +36,7 @@ def priority_updater(priority, user):
     tasks = Task.objects.filter(user=user, priority__gte=priority, deleted=False)
     prev_priority = -1
     for task in tasks:
-        if prev_priority > 0 and prev_priority == task.priority:
+        if prev_priority > 0 and prev_priority != task.priority:
             break
         task.priority += 1
         task.save()
