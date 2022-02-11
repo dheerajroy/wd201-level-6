@@ -3,17 +3,6 @@ from .models import Task
 from django.views.generic import (ListView, CreateView, DetailView, UpdateView, DeleteView)
 from .forms import CreateUpdateTaskForm
 
-class PriorityUpdater:
-    def __init__(self, priority):
-        same_tasks = Task.objects.filter(priority=priority).order_by('-id')[1:]
-        while True:
-            if same_tasks:
-                same_tasks[0].priority += 1
-                same_tasks[0].save()
-                same_tasks = Task.objects.filter(priority=same_tasks[0].priority).order_by('-id')[1:]
-            else:
-                break
-
 class AllTasksView(ListView):
     template_name = 'all_tasks.html'
     paginate_by = 10
@@ -41,6 +30,18 @@ class DetailTaskView(DetailView):
     model = Task
     template_name = 'task.html'
 
+def priority_updater(priority:int, user):
+    try:
+        tasks = Task.objects.filter(user=user, priority=priority)
+        for task in tasks:
+            task.priority += 1
+            priority += 1
+            priority_updater(priority=priority, user=user)
+            task.save()
+    except Task.DoesNotExist:
+        # Task.objects.bulk_update(Task.objects.filter(user=user, priority__gte=priority), ['priority'])
+        pass
+
 class CreateTaskView(CreateView):
     form_class = CreateUpdateTaskForm
     template_name = 'create_update_task.html'
@@ -48,8 +49,8 @@ class CreateTaskView(CreateView):
     
     def form_valid(self, form):
         form.instance.user = self.request.user
+        priority_updater(form.instance.priority, self.request.user)
         form.save()
-        PriorityUpdater(form.instance.priority)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -64,8 +65,8 @@ class UpdateTaskView(UpdateView):
     success_url = '/'
 
     def form_valid(self, form):
-        form.save()
-        PriorityUpdater(form.instance.priority)
+        priority_updater(form.instance.priority, self.request.user)
+        # form.save()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
