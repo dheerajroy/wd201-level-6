@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from numpy import delete
 from .models import Task
 from django.views.generic import (ListView, CreateView, DetailView, UpdateView, DeleteView)
 from .forms import CreateUpdateTaskForm
 
 class AllTasksView(ListView):
+    """Displays all tasks"""
     template_name = 'all_tasks.html'
     paginate_by = 10
     context_object_name = 'tasks'
@@ -30,17 +32,14 @@ class DetailTaskView(DetailView):
     model = Task
     template_name = 'task.html'
 
-def priority_updater(priority:int, user):
-    try:
-        tasks = Task.objects.filter(user=user, priority=priority)
-        for task in tasks:
-            task.priority += 1
-            priority += 1
-            priority_updater(priority=priority, user=user)
-            task.save()
-    except Task.DoesNotExist:
-        # Task.objects.bulk_update(Task.objects.filter(user=user, priority__gte=priority), ['priority'])
-        pass
+def priority_updater(priority, user):
+    tasks = Task.objects.filter(user=user, priority__gte=priority, deleted=False)
+    prev_priority = -1
+    for task in tasks:
+        if prev_priority > 0 and prev_priority == task.priority:
+            break
+        task.priority += 1
+        task.save()
 
 class CreateTaskView(CreateView):
     form_class = CreateUpdateTaskForm
