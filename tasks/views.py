@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from numpy import delete
 from .models import Task
 from django.views.generic import (ListView, CreateView, DetailView, UpdateView, DeleteView)
 from .forms import CreateUpdateTaskForm
@@ -34,13 +33,15 @@ class DetailTaskView(DetailView):
 
 def priority_updater(priority, user):
     tasks = Task.objects.filter(user=user, priority__gte=priority, deleted=False).order_by('priority')
-    prev_priority = -1
+    prev_priority = priority
+    updated_tasks = []
     for task in tasks:
-        if (prev_priority > 0 and prev_priority != task.priority) or (priority not in [t.priority for t in tasks]):
+        if prev_priority == task.priority:
+            prev_priority = task.priority = task.priority+ 1
+            updated_tasks.append(task)
+        else:
             break
-        task.priority += 1
-        task.save()
-        prev_priority = task.priority
+    Task.objects.bulk_update(updated_tasks, ['priority'])
 
 class CreateTaskView(CreateView):
     form_class = CreateUpdateTaskForm
@@ -64,7 +65,9 @@ class UpdateTaskView(UpdateView):
     success_url = '/'
 
     def form_valid(self, form):
-        priority_updater(form.instance.priority, self.request.user)
+        task = Task.objects.get(id=form.instance.id)
+        if task.priority != form.instance.priority:
+            priority_updater(form.instance.priority, self.request.user)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
