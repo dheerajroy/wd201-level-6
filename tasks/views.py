@@ -31,17 +31,17 @@ class DetailTaskView(DetailView):
     model = Task
     template_name = 'task.html'
 
-def priority_updater(priority, user):
-    tasks = Task.objects.filter(user=user, priority__gte=priority, deleted=False).order_by('priority')
+def priority_updater(priority, user, form):
+    tasks = Task.objects.filter(user=user, priority__gte=priority, deleted=False, completed=False).order_by('priority')
     prev_priority = priority
     updated_tasks = []
     for task in tasks:
         if prev_priority == task.priority:
-            prev_priority = task.priority = task.priority+ 1
+            prev_priority = task.priority = task.priority + 1
             updated_tasks.append(task)
         else:
             break
-    Task.objects.bulk_update(updated_tasks, ['priority'])
+    Task.objects.bulk_update(updated_tasks, form.changed_data)
 
 class CreateTaskView(CreateView):
     form_class = CreateUpdateTaskForm
@@ -50,7 +50,7 @@ class CreateTaskView(CreateView):
     
     def form_valid(self, form):
         form.instance.user = self.request.user
-        priority_updater(form.instance.priority, self.request.user)
+        priority_updater(form.instance.priority, self.request.user, form)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -67,7 +67,7 @@ class UpdateTaskView(UpdateView):
     def form_valid(self, form):
         task = Task.objects.get(id=form.instance.id)
         if task.priority != form.instance.priority:
-            priority_updater(form.instance.priority, self.request.user)
+            priority_updater(form.instance.priority, self.request.user, form)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
