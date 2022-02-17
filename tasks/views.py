@@ -41,7 +41,7 @@ def priority_updater(priority, user):
             updated_tasks.append(task)
         else:
             break
-    Task.objects.bulk_update(updated_tasks, priority)
+    Task.objects.bulk_update(updated_tasks, ["priority"])
 
 class CreateTaskView(CreateView):
     form_class = CreateUpdateTaskForm
