@@ -65,8 +65,7 @@ class UpdateTaskView(UpdateView):
     success_url = '/'
 
     def form_valid(self, form):
-        task = Task.objects.get(id=form.instance.id)
-        if task.priority != form.instance.priority:
+        if 'priority' in form.changed_data:
             priority_updater(form.instance.priority, self.request.user, form)
         return super().form_valid(form)
 
